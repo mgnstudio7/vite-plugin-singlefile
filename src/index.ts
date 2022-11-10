@@ -30,8 +30,8 @@ export function replaceScript(html: string, scriptFilename: string, scriptCode: 
 	const newCode = scriptCode.replaceAll(preloadMarker, "void 0")
 	const inlined = html.replace(reScript, (_, beforeSrc, afterSrc) => `<script${beforeSrc}${afterSrc}>\n${newCode}\n</script>`)
 
-    // Удаление export default
-    const replacedInline = inlined.replace("export default", "");
+	//Удаление export default
+	const replacedInline = inlined.replace("export default", "");
 	return removeViteModuleLoader ? _removeViteModuleLoader(replacedInline) : replacedInline
 }
 
@@ -55,7 +55,7 @@ export function viteSingleFile({
 		enforce: "post",
 		generateBundle: (_, bundle) => {
 			const jsExtensionTest = /\.[mc]?js$/
-			const htmlFiles = Object.keys(bundle).filter((i) => i.endsWith(".js"))
+			const htmlFiles = Object.keys(bundle).filter((i) => i.endsWith(".html"))
 			const cssAssets = Object.keys(bundle).filter((i) => i.endsWith(".css"))
 			const jsAssets = Object.keys(bundle).filter((i) => jsExtensionTest.test(i))
 			const bundlesToDelete = [] as string[]
