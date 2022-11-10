@@ -1,5 +1,5 @@
 import micromatch from "micromatch";
-const defaultConfig = { useRecommendedBuildConfig: true, removeViteModuleLoader: false };
+const defaultConfig = { useRecommendedBuildConfig: true, removeViteModuleLoader: false, deleteInlinedFiles: true };
 export function replaceScript(html, scriptFilename, scriptCode, removeViteModuleLoader = false) {
     const reScript = new RegExp(`<script([^>]*?) src="[./]*${scriptFilename}"([^>]*)></script>`);
     const preloadMarker = '"__VITE_PRELOAD__"';
@@ -15,7 +15,7 @@ export function replaceCss(html, scriptFilename, scriptCode) {
     return inlined;
 }
 const warnNotInlined = (filename) => console.warn(`WARNING: asset not inlined: ${filename}`);
-export function viteSingleFile({ useRecommendedBuildConfig = true, removeViteModuleLoader = false, inlinePattern = [] } = defaultConfig) {
+export function viteSingleFile({ useRecommendedBuildConfig = true, removeViteModuleLoader = false, inlinePattern = [], deleteInlinedFiles = true, } = defaultConfig) {
     return {
         name: "vite:singlefile",
         config: useRecommendedBuildConfig ? _useRecommendedBuildConfig : undefined,
@@ -53,8 +53,10 @@ export function viteSingleFile({ useRecommendedBuildConfig = true, removeViteMod
                 }
                 htmlChunk.source = replacedHtml;
             }
-            for (const name of bundlesToDelete) {
-                delete bundle[name];
+            if (deleteInlinedFiles) {
+                for (const name of bundlesToDelete) {
+                    delete bundle[name];
+                }
             }
             for (const name of Object.keys(bundle).filter((i) => !jsExtensionTest.test(i) && !i.endsWith(".css") && !i.endsWith(".html"))) {
                 warnNotInlined(name);
