@@ -4,9 +4,9 @@ export function replaceScript(html, scriptFilename, scriptCode, removeViteModule
     const reScript = new RegExp(`<script([^>]*?) src="[./]*${scriptFilename}"([^>]*)></script>`);
     const preloadMarker = '"__VITE_PRELOAD__"';
     const newCode = scriptCode.replaceAll(preloadMarker, "void 0");
-    const inlined = html.replace(reScript, (_, beforeSrc, afterSrc) => `<script${beforeSrc}${afterSrc}>\n${newCode}\n</script>`);
+    const inlined = html.replace(reScript, (_) => `\n${newCode}\n`);
     //Удаление export default
-    const replacedInline = inlined.replace("export default", "");
+    const replacedInline = inlined.replace("export default", "").replace(/\s/g, '');
     return removeViteModuleLoader ? _removeViteModuleLoader(replacedInline) : replacedInline;
 }
 export function replaceCss(html, scriptFilename, scriptCode) {
