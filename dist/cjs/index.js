@@ -12,7 +12,7 @@ function replaceScript(html, scriptFilename, scriptCode, removeViteModuleLoader 
     const newCode = scriptCode.replaceAll(preloadMarker, "void 0");
     const inlined = html.replace(reScript, (_) => `\n${newCode}\n`);
     //Удаление export default
-    const replacedInline = inlined.replace("export default", "").replace(/\s/g, '');
+    const replacedInline = inlined.replace("export default", "");
     return removeViteModuleLoader ? _removeViteModuleLoader(replacedInline) : replacedInline;
 }
 exports.replaceScript = replaceScript;
