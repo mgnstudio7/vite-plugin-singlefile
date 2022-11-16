@@ -24,11 +24,10 @@ export type Config = {
 
 const defaultConfig = { useRecommendedBuildConfig: true, removeViteModuleLoader: false, deleteInlinedFiles: true }
 
-export function replaceScript(html: string, scriptFilename: string, scriptCode: string, removeViteModuleLoader = false): string {
-	const reScript = new RegExp(`<script([^>]*?) src="[./]*${scriptFilename}"([^>]*)></script>`)
+export function replaceScript(scriptCode: string, removeViteModuleLoader = false): string {
 	const preloadMarker = '"__VITE_PRELOAD__"'
 	const newCode = scriptCode.replaceAll(preloadMarker, "void 0")
-	const inlined = html.replace(reScript, (_,) => `\n${newCode}\n`)
+    const inlined = `\n${newCode}\n`;
 
 	//Удаление export default
 	const replacedInline = inlined.replace("export default", "");
@@ -67,7 +66,7 @@ export function viteSingleFile({
 						const jsChunk = bundle[jsName] as OutputChunk
 						if (jsChunk.code != null) {
 							bundlesToDelete.push(jsName)
-							replacedHtml = replaceScript(replacedHtml, jsChunk.fileName, jsChunk.code, removeViteModuleLoader)
+							replacedHtml = replaceScript(jsChunk.code, removeViteModuleLoader)
 						}
 					} else {
 						warnNotInlined(jsName)

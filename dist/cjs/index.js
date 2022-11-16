@@ -6,11 +6,10 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.viteSingleFile = exports.replaceCss = exports.replaceScript = void 0;
 const micromatch_1 = __importDefault(require("micromatch"));
 const defaultConfig = { useRecommendedBuildConfig: true, removeViteModuleLoader: false, deleteInlinedFiles: true };
-function replaceScript(html, scriptFilename, scriptCode, removeViteModuleLoader = false) {
-    const reScript = new RegExp(`<script([^>]*?) src="[./]*${scriptFilename}"([^>]*)></script>`);
+function replaceScript(scriptCode, removeViteModuleLoader = false) {
     const preloadMarker = '"__VITE_PRELOAD__"';
     const newCode = scriptCode.replaceAll(preloadMarker, "void 0");
-    const inlined = html.replace(reScript, (_) => `\n${newCode}\n`);
+    const inlined = `\n${newCode}\n`;
     //Удаление export default
     const replacedInline = inlined.replace("export default", "");
     return removeViteModuleLoader ? _removeViteModuleLoader(replacedInline) : replacedInline;
@@ -42,7 +41,7 @@ function viteSingleFile({ useRecommendedBuildConfig = true, removeViteModuleLoad
                         const jsChunk = bundle[jsName];
                         if (jsChunk.code != null) {
                             bundlesToDelete.push(jsName);
-                            replacedHtml = replaceScript(replacedHtml, jsChunk.fileName, jsChunk.code, removeViteModuleLoader);
+                            replacedHtml = replaceScript(jsChunk.code, removeViteModuleLoader);
                         }
                     }
                     else {
